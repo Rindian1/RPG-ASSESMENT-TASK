@@ -1,29 +1,38 @@
-# RPG Storyboard
+# RPG Storyboard - Golden Path
 
-## Scene 1: Game Start - Maintenance Tunnels
+## Frame 1: Initial Game State
 
 ### Location Header
 ```
 === MAINTENANCE TUNNELS ===
 ```
 
-### Initial Description
+### Location Description
 ```
 You wake up in the dimly lit maintenance tunnels of the space station.
 The air hums with the sound of distant machinery.
 ```
 
+### Items Present
+```
+- Diagnostic Tool (on floor)
+- Damaged Maintenance Droid (blocking east exit)
+```
+
+### Available Exits
+```
+Exits: [east]
+```
+
+### Player Input
 ```
 What will you do?
-> 
+> _
 ```
 
-## Scene 2: Tool Discovery
+---
 
-### Tool Description
-```
-You see a Diagnostic Tool on the floor.
-```
+## Frame 2: Picking Up the Tool
 
 ### Player Action
 ```
@@ -33,6 +42,169 @@ You see a Diagnostic Tool on the floor.
 ### System Response
 ```
 [+10 points] You picked up the Diagnostic Tool.
+```
+
+### Updated Game State
+- **Score:** 10
+- **Inventory:** Diagnostic Tool
+- **Droid Status:** Blocking east exit
+
+### Available Actions
+```
+What will you do?
+> _
+```
+
+---
+
+## Frame 3: Attempting to Move East (Blocked)
+
+### Player Action
+```
+> move east
+```
+
+### System Response
+```
+The damaged maintenance droid is blocking your path!
+Hazard count: 1
+```
+
+### Current Hazards
+```
+Total Hazards: 1
+```
+
+### Available Actions
+```
+What will you do?
+> _
+```
+
+---
+
+## Frame 4: Using the Tool on Droid
+
+### Player Action
+```
+> use tool
+```
+
+### System Response
+```
+[+20 points] You repaired the droid! It moves aside.
+```
+
+### Updated Game State
+- **Score:** 30
+- **Droid Status:** Repaired, no longer blocking
+- **Path to Docking Bay:** Unlocked
+
+### Available Actions
+```
+What will you do?
+> _
+```
+
+---
+
+## Frame 5: Moving to Docking Bay
+
+### Player Action
+```
+> move east
+```
+
+### New Location
+```
+=== DOCKING BAY ===
+The docking bay is spacious, with various equipment along the walls.
+A glowing Energy Crystal rests on a nearby console.
+```
+
+### Available Exits
+```
+Exits: [west]
+```
+
+### Available Actions
+```
+What will you do?
+> _
+```
+
+---
+
+## Frame 6: Picking Up the Crystal
+
+### Player Action
+```
+> pick up crystal
+```
+
+### System Response
+```
+[+50 points] You picked up the Energy Crystal!
+```
+
+### Updated Game State
+- **Score:** 80
+- **Inventory:** Energy Crystal
+- **Crystal Status:** In possession
+
+### Available Actions
+```
+What will you do?
+> _
+```
+
+---
+
+## Frame 7: Checking Status
+
+### Player Action
+```
+> status
+```
+
+### Status Display
+```
+=== STATUS ===
+Score: 80
+Hazards: 1
+Current Location: Docking Bay
+Inventory: Energy Crystal
+```
+
+### Available Actions
+```
+What will you do?
+> _
+```
+
+---
+
+## Frame 8: Winning the Game
+
+### Player Action
+```
+> win
+```
+
+### Victory Message
+```
+[+30 points] Mission complete!
+
+=== MISSION ACCOMPLISHED ===
+You secured the Energy Crystal and completed your mission!
+```
+
+### Final Score
+```
+Final Score: 110/110
+Hazards encountered: 1
+
+Thank you for playing!
 ```
 
 ## Scene 3: Droid Encounter
