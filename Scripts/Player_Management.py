@@ -5,17 +5,29 @@ class Player:
         self.has_crystal = has_crystal 
         self.score = score 
         self.hazard_count = hazard_count 
-    
-    def move(self, direction):   
-        # Check if trying to move east while droid is blocking (FIXED LOGIC)
-        if direction == "east" and self.current_location.droid_present:  
-            self.hazard_count += 1
-            return "The damaged maintenance droid is blocking your path!\nHazard count: " + str(self.hazard_count)
-        elif direction in self.current_location.exits:  
-            self.current_location = self.current_location.exits[direction]   
-            return f"You move to the {self.current_location.name}." 
-        else: 
-            return "You cannot move in that direction." 
+
+    def move(self, direction):
+        try:
+            # Validate direction input
+            if not isinstance(direction, str) or not direction.strip():
+                return "Please specify a valid direction."
+                
+            direction = direction.strip().lower()
+            
+            # Check if trying to move east while droid is blocking
+            if direction == "east" and self.current_location.droid_present:  
+                self.hazard_count += 1
+                return f"The damaged maintenance droid is blocking your path!\nHazard count: {self.hazard_count}"
+            elif direction in self.current_location.exits:  
+                self.current_location = self.current_location.exits[direction]   
+                return f"You move to the {self.current_location.name}." 
+            else: 
+                available_exits = ", ".join(self.current_location.exits.keys()) if self.current_location.exits else "none"
+                return f"You cannot move in that direction. Available exits: {available_exits}"
+        except AttributeError:
+            return "Error: Invalid location or direction data."
+        except Exception as e:
+            return f"Movement error: Please try again."
     
     def pick_up_tool(self): 
         if self.current_location.has_tool:  

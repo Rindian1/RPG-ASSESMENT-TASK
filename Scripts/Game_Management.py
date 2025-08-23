@@ -14,33 +14,26 @@ class GameController:
     
     def setup_world(self):  
         """Initialize the game world with locations, items, and player"""
-        # Create locations
+        # Create the two main game locations
         self.maintenance_tunnel = Location(
             "Maintenance Tunnels", 
             "You wake up in the dimly lit maintenance tunnels of the space station.\nThe air hums with the sound of distant machinery.", 
-            {}, # Will be populated below
-            has_tool=True, 
-            droid_present=True
+            {},  # Exits populated below to avoid circular reference issues
+            has_tool=True,  # Starting location contains the diagnostic tool
+            droid_present=True  # Droid blocks eastward progression initially
         )
         
         self.docking_bay = Location(
             "Docking Bay", 
             "The docking bay is spacious, with various equipment along the walls.\nA glowing Energy Crystal rests on a nearby console.", 
-            {}, # Will be populated below
-            has_crystal=True
+            {},  # Exits populated below
+            has_crystal=True  # Goal location contains the energy crystal
         )
         
-        # Set up exits between locations
+        # Create bidirectional connection between locations
+        # This allows movement in both directions once droid is cleared
         self.maintenance_tunnel.exits = {"east": self.docking_bay}
         self.docking_bay.exits = {"west": self.maintenance_tunnel}
-        
-        # Create items and droid
-        self.diagnostic_tool = DiagnosticTool()
-        self.energy_crystal = EnergyCrystal()
-        self.maintenance_droid = DamagedMaintenanceDroid()
-        
-        # Create player starting in maintenance tunnels
-        self.player = Player(self.maintenance_tunnel)
     
     def start_game(self): 
         """Main game loop"""
@@ -61,28 +54,31 @@ class GameController:
                 print(f"\nExits: [{exits}]")
             
             # Get and process command
+            # In Game_Management.py - start_game() method
             try:
                 command = input("\nWhat will you do?\n> ").strip().lower()
                 
-                # Handle quit commands
                 if command in ["quit", "exit"]:
                     print("Thanks for playing!")
                     break
                     
-                # Process the command
                 result = self.process_input(command)
                 if result:
                     print(result)
                 
-                # Check for win condition
                 if self.check_win_condition(command):
                     break
                     
             except (EOFError, KeyboardInterrupt):
-                print("\nThanks for playing!")
+                print("\nGame interrupted. Thanks for playing!")
                 break
+            except ValueError as e:
+                print(f"Invalid input: {e}. Please try again.")
+            except AttributeError as e:
+                print("Game state error. Restarting location...")
+                # Could reset to a safe state here
             except Exception as e:
-                print("An error occurred. Please try again.")
+                print(f"An unexpected error occurred: {type(e).__name__}. Please try a different command.")
     
     def process_input(self, command): 
         """Process player input and return appropriate response"""
