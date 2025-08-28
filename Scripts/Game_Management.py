@@ -97,21 +97,26 @@ class GameController:
         else: 
             print("Invalid command. Type 'help' for available commands.")
     
-    def check_win_condition(self, command): 
-        if (hasattr(self.player.current_location, 'name') and 
-            self.player.current_location.name == "Docking Bay" and 
-            self.player.has_crystal and 
-            command == "win"):
+    def check_win_condition(self, command):
+        """Check if the player has won the game"""
+        if command.strip().lower() != "win":
+            return False
             
-            self.player.score += 30 
-            print("\n" + "="*50)
-            print("=== MISSION ACCOMPLISHED ===")
+        # Check if player is in the docking bay and has the crystal
+        if (self.player.current_location.name == "Docking Bay" and 
+            self.player.has_crystal):
+            # Access the private score attribute directly since we made it private
+            self.player._Player__score += 30 
+            print("\n" + "=" * 50)
+            print("[+30 points] Mission complete!")
+            print("\n=== MISSION ACCOMPLISHED ===")
             print("You secured the Energy Crystal and completed your mission!")
-            print(f"Final Score: {self.player.score}/110")
-            print(f"Total Hazards: {self.player.hazard_count}")
-            print("Thank you for playing!")
+            print(f"\nFinal Score: {self.player._Player__score}/110")
+            print(f"Hazards encountered: {self.player._Player__hazard_count}")
+            print("\nThank you for playing!")
             return True
-        return False
+        
+        return "You cannot win yet. Make sure you're in the Docking Bay with the Energy Crystal."
     
     def show_help(self):
         print("\nAvailable commands:")

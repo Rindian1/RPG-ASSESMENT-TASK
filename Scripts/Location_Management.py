@@ -23,7 +23,7 @@ class Location:
         return False
         
     def remove_crystal(self):
-        if self.has_crystal:
+        if self.ha==s_crystal:
             self.has_crystal = False
             return True
         return False
