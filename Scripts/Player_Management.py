@@ -46,4 +46,4 @@ class Player:
             print("There is no crystal here.")  
     
     def get_status(self): 
-        print(f"Score: {self.score}\nHazards: {self.hazard_count} \n Location: {self.current_location.name}\n Inventory: {self.has_tool, self.has_crystal}")
+        print(f"Score: {self.score}\nHazards: {self.hazard_count} \n Location: {self.current_location.name}\n Has tool: {self.has_tool}\n Has crystal: {self.has_crystal}")
