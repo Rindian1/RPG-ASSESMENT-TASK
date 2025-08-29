@@ -1,4 +1,5 @@
 class StationItem:
+    # Abstracted class for all items
     def __init__(self, _name, _description):
         self._name = _name
         self._description = _description
@@ -7,7 +8,8 @@ class StationItem:
         """Returns the description of the item - to be overridden by subclasses"""
         return self._description
 
-class DiagnosticTool(StationItem):
+class DiagnosticTool(StationItem): 
+    #Inherits station item
     def __init__(self):
         super().__init__(
             _name="Diagnostic Tool",
@@ -17,7 +19,8 @@ class DiagnosticTool(StationItem):
         """Override to provide specific tool description"""
         return self._description
 
-class EnergyCrystal(StationItem):
+class EnergyCrystal(StationItem): 
+    #inherits station
     def __init__(self):
         super().__init__(
             _name="Energy Crystal",

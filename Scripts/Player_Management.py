@@ -5,36 +5,23 @@ class Player:
         self.has_crystal = has_crystal 
         self.score = score 
         self.hazard_count = hazard_count 
-
-    def move(self, direction):
-        try:
-            # Validate direction input
-            if not isinstance(direction, str) or not direction.strip():
-                return "Please specify a valid direction."
-                
-            direction = direction.strip().lower()
-            
-            # Check if trying to move east while droid is blocking
-            if direction == "east" and self.current_location.droid_present:  
-                self.hazard_count += 1
-                return f"The damaged maintenance droid is blocking your path!\nHazard count: {self.hazard_count}"
-            elif direction in self.current_location.exits:  
-                self.current_location = self.current_location.exits[direction]   
-                return f"You move to the {self.current_location.name}." 
-            else: 
-                available_exits = ", ".join(self.current_location.exits.keys()) if self.current_location.exits else "none"
-                return f"You cannot move in that direction. Available exits: {available_exits}"
-        except AttributeError:
-            return "Error: Invalid location or direction data."
-        except Exception as e:
-            return f"Movement error: Please try again."
+    
+    def move(self, direction):   
+        if self.current_location.droid_present and direction == "east":  
+            self.hazard_count += 1
+            return f"The droid is blocking your path!\nHazard count: {self.hazard_count}"
+        elif direction in self.current_location.exits and not self.current_location.droid_present:  
+            self.current_location = self.current_location.exits[direction]   
+            return f"You move to the {self.current_location.name}" 
+        elif direction not in self.current_location.exits: 
+            return "You cannot move in that direction" 
     
     def pick_up_tool(self): 
         if self.current_location.has_tool:  
             self.has_tool = True
             self.current_location.remove_tool() 
             self.score += 10 
-            return "[+10 points] You picked up the Diagnostic Tool." 
+            return f"[+10 points] You picked up the tool!" 
         else: 
             return "There is no tool here." 
     
@@ -43,7 +30,7 @@ class Player:
             droid.repair() 
             self.current_location.droid_present = False 
             self.score += 20 
-            return "[+20 points] You repaired the droid! It moves aside." 
+            return f"[+20 points] You repaired the droid!"  
         elif not self.has_tool and self.current_location.droid_present: 
             return "You don't have a tool to use on the droid." 
         else: 
@@ -54,22 +41,9 @@ class Player:
             self.has_crystal = True
             self.current_location.remove_crystal() 
             self.score += 50 
-            return "[+50 points] You picked up the Energy Crystal!" 
+            return f"[+50 points] You picked up the crystal!" 
         else: 
             return "There is no crystal here."  
     
     def get_status(self): 
-        # Enhanced status display with location and inventory
-        inventory_items = []
-        if self.has_tool:
-            inventory_items.append("Diagnostic Tool")
-        if self.has_crystal:
-            inventory_items.append("Energy Crystal")
-        
-        inventory_str = ", ".join(inventory_items) if inventory_items else "Empty"
-        
-        return (f"=== STATUS ===\n"
-                f"Score: {self.score}\n"
-                f"Hazards: {self.hazard_count}\n"
-                f"Current Location: {self.current_location.name}\n"
-                f"Inventory: {inventory_str}")
+        return f"Score: {self.score}\nHazards: {self.hazard_count} \n Location: {self.current_location.name}\n Inventory: {self.has_tool, self.has_crystal}"

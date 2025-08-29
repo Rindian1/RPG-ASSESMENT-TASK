@@ -1,3 +1,4 @@
+from ast import Break
 from Location_Management import Location, DamagedMaintenanceDroid
 from Player_Management import Player
 from Items import DiagnosticTool, EnergyCrystal
@@ -17,10 +18,10 @@ class GameController:
         # Create the two main game locations
         self.maintenance_tunnel = Location(
             "Maintenance Tunnels", 
-            "You wake up in the dimly lit maintenance tunnels of the space station.\nThe air hums with the sound of distant machinery.", 
-            {},  # Exits populated below to avoid circular reference issues
-            has_tool=True,  # Starting location contains the diagnostic tool
-            droid_present=True  # Droid blocks eastward progression initially
+            "You have woken up in the dimly lit maintenance tunnels of the space station. The air hums with the sound of distant machinery.", 
+            {"east": None}, 
+            has_tool=True, 
+            droid_present=True
         )
         
         self.docking_bay = Location(
@@ -54,31 +55,20 @@ class GameController:
                 print(f"\nExits: [{exits}]")
             
             # Get and process command
-            # In Game_Management.py - start_game() method
-            try:
-                command = input("\nWhat will you do?\n> ").strip().lower()
+
+            command = input("\nWhat will you do? ").strip().lower()
                 
-                if command in ["quit", "exit"]:
-                    print("Thanks for playing!")
-                    break
-                    
-                result = self.process_input(command)
-                if result:
-                    print(result)
-                
-                if self.check_win_condition(command):
-                    break
-                    
-            except (EOFError, KeyboardInterrupt):
-                print("\nGame interrupted. Thanks for playing!")
+            if command == "quit" or command == "exit":
+                print("Thanks for playing!")
                 break
-            except ValueError as e:
-                print(f"Invalid input: {e}. Please try again.")
-            except AttributeError as e:
-                print("Game state error. Restarting location...")
-                # Could reset to a safe state here
-            except Exception as e:
-                print(f"An unexpected error occurred: {type(e).__name__}. Please try a different command.")
+                    
+            if command.startswith("move "):
+                direction = command.split(" ", 1)[1]
+                print(self.player.move(direction))
+            else:
+                self.process_input(command)  
+                if self.check_win_condition(command):   
+                    break
     
     def process_input(self, command): 
         """Process player input and return appropriate response"""
@@ -107,37 +97,24 @@ class GameController:
             return self.examine_item(item)
         
         elif command == "help":
-            return self.show_help()
-        
-        elif command == "win":
-            return None  # Handled in check_win_condition
-        
+            self.show_help()
+        elif command == "win": 
+            pass
+                
         else: 
-            return "I don't understand that command. Type 'help' for available commands."
-    
-    def examine_item(self, item_name):
-        """Allow player to examine items (demonstrates polymorphism)"""
-        item_name = item_name.lower().strip()
-        
-        if item_name in ["tool", "diagnostic tool"] and self.player.has_tool:
-            return self.diagnostic_tool.examine()
-        elif item_name in ["crystal", "energy crystal"] and self.player.has_crystal:
-            return self.energy_crystal.examine()
-        elif item_name in ["tool", "diagnostic tool"] and self.player.current_location.has_tool:
-            return "A standard issue diagnostic tool. It can be used to repair damaged equipment."
-        elif item_name in ["crystal", "energy crystal"] and self.player.current_location.has_crystal:
-            return "A bright Energy Crystal pulses with energy on the console."
-        else:
-            return "You don't see that item here."
-    
-    def check_win_condition(self, command): 
+            print(f"Unknown command: '{command}'")
+            print("Invalid command. Type 'help' for available commands.")
+        return False
+
+    def check_win_condition(self, command):
+        if command != "win": 
+            return False
         """Check if the player has won the game"""
+        # Check if player is in the docking bay and has the crystal
         if (self.player.current_location.name == "Docking Bay" and 
-            self.player.has_crystal and 
-            command == "win"):
-            
-            self.player.score += 30 
-            print("\n" + "=" * 50)
+            self.player.has_crystal): 
+            print("\n" + "=" * 50) 
+            self.player.score += 30
             print("[+30 points] Mission complete!")
             print("\n=== MISSION ACCOMPLISHED ===")
             print("You secured the Energy Crystal and completed your mission!")
@@ -145,10 +122,11 @@ class GameController:
             print(f"Hazards encountered: {self.player.hazard_count}")
             print("\nThank you for playing!")
             return True
-        elif command == "win":
-            return "You cannot win yet. Make sure you're in the Docking Bay with the Energy Crystal."
-        
-        return False
+            # Access the private score attribute directly since we made it private
+        else: 
+            print("Win condition not met")
+            print("Make sure you're in the Docking Bay with the Energy Crystal.")
+            return False
     
     def show_help(self):
         """Display available commands to the player"""
