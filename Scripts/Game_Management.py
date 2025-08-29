@@ -30,7 +30,10 @@ class GameController:
             {},  # Exits populated below
             has_crystal=True  # Goal location contains the energy crystal
         )
-        
+        self.player = Player(self.maintenance_tunnel)
+        self.diagnostic_tool = DiagnosticTool()
+        self.energy_crystal = EnergyCrystal()
+        self.maintenance_droid = DamagedMaintenanceDroid()
         # Create bidirectional connection between locations
         # This allows movement in both directions once droid is cleared
         self.maintenance_tunnel.exits = {"east": self.docking_bay}
@@ -149,4 +152,4 @@ class GameController:
 4. Pick up the Energy Crystal
 5. Type 'win' to complete your mission!
         """
-        return help_text.strip()
+        print( help_text.strip())

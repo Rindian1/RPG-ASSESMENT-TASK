@@ -9,41 +9,41 @@ class Player:
     def move(self, direction):   
         if self.current_location.droid_present and direction == "east":  
             self.hazard_count += 1
-            return f"The droid is blocking your path!\nHazard count: {self.hazard_count}"
+            print(f"The droid is blocking your path!\nHazard count: {self.hazard_count}")
         elif direction in self.current_location.exits and not self.current_location.droid_present:  
             self.current_location = self.current_location.exits[direction]   
-            return f"You move to the {self.current_location.name}" 
+            print(f"You move to the {self.current_location.name}") 
         elif direction not in self.current_location.exits: 
-            return "You cannot move in that direction" 
+            print("You cannot move in that direction") 
     
     def pick_up_tool(self): 
         if self.current_location.has_tool:  
             self.has_tool = True
             self.current_location.remove_tool() 
             self.score += 10 
-            return f"[+10 points] You picked up the tool!" 
+            print(f"[+10 points] You picked up the tool!") 
         else: 
-            return "There is no tool here." 
+            print("There is no tool here.") 
     
     def use_tool_on_droid(self, droid): 
         if self.has_tool and self.current_location.droid_present:  
             droid.repair() 
             self.current_location.droid_present = False 
             self.score += 20 
-            return f"[+20 points] You repaired the droid!"  
+            print(f"[+20 points] You repaired the droid!")  
         elif not self.has_tool and self.current_location.droid_present: 
-            return "You don't have a tool to use on the droid." 
+            print("You don't have a tool to use on the droid.")
         else: 
-            return "There is no droid to repair."  
+            print("There is no droid to repair.")  
     
     def pick_up_crystal(self): 
         if self.current_location.has_crystal:  
             self.has_crystal = True
             self.current_location.remove_crystal() 
             self.score += 50 
-            return f"[+50 points] You picked up the crystal!" 
+            print(f"[+50 points] You picked up the crystal!") 
         else: 
-            return "There is no crystal here."  
+            print("There is no crystal here.")  
     
     def get_status(self): 
-        return f"Score: {self.score}\nHazards: {self.hazard_count} \n Location: {self.current_location.name}\n Inventory: {self.has_tool, self.has_crystal}"
+        print(f"Score: {self.score}\nHazards: {self.hazard_count} \n Location: {self.current_location.name}\n Inventory: {self.has_tool, self.has_crystal}")
