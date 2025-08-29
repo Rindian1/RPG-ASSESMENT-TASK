@@ -1,3 +1,4 @@
+from ast import Break
 from Location_Management import Location, DamagedMaintenanceDroid
 from Player_Management import Player
 from Items import DiagnosticTool, EnergyCrystal
@@ -16,7 +17,7 @@ class GameController:
         # Create locations
         self.maintenance_tunnel = Location(
             "Maintenance Tunnels", 
-            "You wake up in the dimly lit maintenance tunnels of the space station. The air hums with the sound of distant machinery.", 
+            "You have woken up in the dimly lit maintenance tunnels of the space station. The air hums with the sound of distant machinery.", 
             {"east": None}, 
             has_tool=True, 
             droid_present=True
@@ -62,24 +63,20 @@ class GameController:
                 print("A damaged maintenance droid is blocking the way!")
             
             # Get and process command
-            try:
-                command = input("\nWhat will you do? ").strip().lower()
+
+            command = input("\nWhat will you do? ").strip().lower()
                 
-                if command == "quit" or command == "exit":
-                    print("Thanks for playing!")
-                    break
+            if command == "quit" or command == "exit":
+                print("Thanks for playing!")
+                break
                     
-                if command.startswith("move "):
-                    direction = command.split(" ", 1)[1]
-                    print(self.player.move(direction))
-                else:
-                    self.process_input(command)
-                
-                if self.check_win_condition(command):
+            if command.startswith("move "):
+                direction = command.split(" ", 1)[1]
+                print(self.player.move(direction))
+            else:
+                self.process_input(command)  
+                if self.check_win_condition(command):   
                     break
-                    
-            except Exception as e:
-                print("Invalid command. Type 'help' for available commands.")
     
     def process_input(self, command): 
         if command == "pick up tool": 
@@ -92,31 +89,35 @@ class GameController:
             print(self.player.get_status())
         elif command == "help":
             self.show_help()
-        elif command == "win":
-            pass  # Handled in check_win_condition
+        elif command == "win": 
+            pass
+                
         else: 
+            print(f"Unknown command: '{command}'")
             print("Invalid command. Type 'help' for available commands.")
-    
+        return False
+
     def check_win_condition(self, command):
-        """Check if the player has won the game"""
-        if command.strip().lower() != "win":
+        if command != "win": 
             return False
-            
+        """Check if the player has won the game"""
         # Check if player is in the docking bay and has the crystal
         if (self.player.current_location.name == "Docking Bay" and 
-            self.player.has_crystal):
-            # Access the private score attribute directly since we made it private
-            self.player._Player__score += 30 
-            print("\n" + "=" * 50)
+            self.player.has_crystal): 
+            print("\n" + "=" * 50) 
+            self.player.score += 30
             print("[+30 points] Mission complete!")
             print("\n=== MISSION ACCOMPLISHED ===")
             print("You secured the Energy Crystal and completed your mission!")
-            print(f"\nFinal Score: {self.player._Player__score}/110")
-            print(f"Hazards encountered: {self.player._Player__hazard_count}")
+            print(f"\nFinal Score: {self.player.score}/110")
+            print(f"Hazards encountered: {self.player.hazard_count}")
             print("\nThank you for playing!")
             return True
-        
-        return "You cannot win yet. Make sure you're in the Docking Bay with the Energy Crystal."
+            # Access the private score attribute directly since we made it private
+        else: 
+            print("Win condition not met")
+            print("Make sure you're in the Docking Bay with the Energy Crystal.")
+            return False
     
     def show_help(self):
         print("\nAvailable commands:")
